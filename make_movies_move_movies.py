@@ -52,7 +52,7 @@ def parseArguments():
   parser = argparse.ArgumentParser(description='collect segmentation files into one directory')
   parser.add_argument('-d', '--dir', type=str, help='The directory where the knockdown folders are', required=True)
   parser.add_argument('-e', '--errors', type=str, help='The file from which to read segmentation errors', required=False)
-  parser.add_argument('-m', '--mode', type=str, help='The movie type that should be moved Either \'ratio\', or \'raw\'.', required=True)
+  parser.add_argument('-m', '--mode', type=str, help='The movie type that should be moved Either \'ratio\', or the channel name.', required=True)
   args = parser.parse_args()
   return(args)
 
@@ -78,6 +78,9 @@ def go_one_up(path):
 
 #%%
 def get_move_paths(path, mode):
+    '''
+    mode is either ratio for raito movies, or the channel name
+    '''
     tifind=re.compile('.tif')
     findfile='movieData.mat'
     oldfiles=[]
@@ -94,8 +97,8 @@ def get_move_paths(path, mode):
         if findfile in files:
             i_dirs.append(root)
             for item in i_dirs:
-                if moviename =='raw':
-                    i_path=os.path.join(item, 'FRET')
+                if moviename !='ratio':
+                    i_path=os.path.join(item, moviename)
                 if moviename=='ratio':
                     i_path=os.path.join(item, 'BiosensorsPackage', 'ratio_tiffs')
                 #print(i_path)
