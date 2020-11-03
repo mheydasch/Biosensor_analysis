@@ -57,7 +57,7 @@ def simple_moviemaker(path):
                         current_ID=Movie_ID
                         #go to next interation of loop if ID is in processed
                         if current_ID in processed:
-                            next
+                            continue
                             
                         print(current_ID)
                         #print(Timepoint)
