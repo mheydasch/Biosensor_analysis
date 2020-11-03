@@ -44,20 +44,24 @@ def simple_moviemaker(path):
         #checking individual files
     for item in files:
         current_ID=None
+        #selecting only tifs
         if '.tif' in item or '.TIF' in item or '.tiff' in item:
+            #in case a channel was specified, select only files with that channel
             if channel != None:
                 if channel in item:
-            
+                    #create empty list to append later
                     current_Movie=[]
                     #extracts ID and timepoint
                     try:
                         Movie_ID, Timepoint=re.search(pattern, item).group('Movie_ID', 'Timepoint')
                         current_ID=Movie_ID
+                        #go to next interation of loop if ID is in processed
                         if current_ID in processed:
                             next
                             
                         print(current_ID)
                         #print(Timepoint)
+                    #exception in case an item was found that cant be matched    
                     except:
                         print('{} does not match pattern'.format(item))
                     #check if movie has been processed already
@@ -67,6 +71,7 @@ def simple_moviemaker(path):
                             if current_ID in item:
         
                                 current_Movie.append(item)
+                    #append current id to the list of processed movies            
                     processed.append(current_ID)
                     #sorting current list
                     current_Movie=natsorted(current_Movie)
