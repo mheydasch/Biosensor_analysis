@@ -18,6 +18,12 @@ import glob, os
 
 import argparse
 
+def createFolder(directory):
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    except OSError:
+        print ('Error: Creating directory. ' + directory)
 def parseArguments():
   # Define the parser and read arguments
   parser = argparse.ArgumentParser(description='collect segmentation files into one directory')
@@ -28,19 +34,14 @@ def parseArguments():
   args = parser.parse_args()
   return(args)
   
-def createFolder(directory):
-    try:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-    except OSError:
-        print ('Error: Creating directory. ' + directory)
 def simple_moviemaker(path):
     
     if microscope=='Jungfrau':
         
-        pattern=re.compile('.*(?P<Timepoint>_T[0-9]+)_(?P<Movie_ID>XY[0-9]+_.*).tif')
+        pattern=re.compile('^(?P<Timepoint>t[0-9]+)_.*_(?P<Movie_ID>XY[0-9]+)_.*.tif')
     if microscope=='Eiger':
-        pattern=re.compile('^(?P<Classifier>.*)(?P<FOV>_[0-9])_.*(?P<Site>_s[0-9]+)_(?P<Timepoint>t[0-9]+).TIF')
+        #pattern=re.compile('^(?P<Classifier>.*)(?P<FOV>_[0-9])_.*(?P<Site>_s[0-9]+)_(?P<Timepoint>t[0-9]+).TIF')
+        pattern=re.compile('^(?P<Movie_ID>.*)_(?P<Timepoint>t[0-9]+).TIF')
     #pattern=re.compile('(?P<Movie_ID>.*)(?P<Timepoint>_t[0-9]+)')
     processed=[]
     
@@ -64,8 +65,11 @@ def simple_moviemaker(path):
                             Movie_ID, Timepoint=re.search(pattern, item).group('Movie_ID', 'Timepoint')
                             current_ID=Movie_ID
                         if microscope=='Eiger':
-                            Classifier, FOV, Site, Timepoint=re.search(pattern, item).group('Classifier', 'FOV', 'Site', 'Timepoint')
-                            current_ID=Classifier+FOV+Site
+                            #Classifier, FOV, Site, Timepoint=re.search(pattern, item).group('Classifier', 'FOV', 'Site', 'Timepoint')
+                            Movie_ID, Timepoint=re.search(pattern, item).group('Movie_ID', 'Timepoint')
+                            current_ID=Movie_ID
+                            #current_ID=Classifier+FOV+Site
+                            #Movie_ID=current_ID
                         #go to next interation of loop if ID is in processed
                         if current_ID in processed:
                             continue
@@ -75,6 +79,7 @@ def simple_moviemaker(path):
                     #exception in case an item was found that cant be matched    
                     except:
                         print('{} does not match pattern'.format(item))
+                        continue
                     #check if movie has been processed already
                     if current_ID!=None:
                     #get the files that belong to the current one 
@@ -94,7 +99,8 @@ def simple_moviemaker(path):
                             img=Image.open(os.path.join(path, i))
                             tifseries.append(img)
                             #print(tifseries)
-                    tifseriespath=os.path.join(path, Movie_ID + 'movie.tiff')
+                    createFolder(os.path.join(path, 'movies'))
+                    tifseriespath=os.path.join(path, 'movies', Movie_ID + 'movie.tiff')
                     try:
                         imageio.mimwrite(tifseriespath, tifseries)
                         print('Movie saved as', tifseriespath)
