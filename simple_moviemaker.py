@@ -46,7 +46,7 @@ def simple_moviemaker(path):
         #pattern=re.compile('^(?P<Classifier>.*)(?P<FOV>_[0-9])_.*(?P<Site>_s[0-9]+)_(?P<Timepoint>t[0-9]+).TIF')
         pattern=re.compile('^(?P<Movie_ID>.*)_(?P<Timepoint>t[0-9]+).TIF')
     if microscope=='NIS':
-        pattern=re.compile('.*(?P<Timepoint>T[0-9]+)_(?P<Movie_ID>XY[0-9+])_.*.tif')
+        pattern=re.compile('.*(?P<Timepoint>T[0-9]+)_(?P<Movie_ID>XY[0-9]+).*.tif')
     #pattern=re.compile('(?P<Movie_ID>.*)(?P<Timepoint>_t[0-9]+)')
     processed=[]
     
@@ -123,8 +123,10 @@ if __name__ == '__main__':
     path=args.dir
     channel=args.chan
     microscope=args.mic
-    if args.mic == None:
-        microscope='Jungfrau'
+# =============================================================================
+#     if args.mic == None:
+#         microscope='Jungfrau'
+# =============================================================================
     simple_moviemaker(path)
 
     print(args)
