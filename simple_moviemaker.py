@@ -30,7 +30,7 @@ def parseArguments():
   parser.add_argument('-d', '--dir', type=str, help='The directory where the knockdown folders are', required=True)
   parser.add_argument('-ch', '--chan', type=str, help='specify the channel you want to make a movie from', required =False)
   parser.add_argument('-mic', '--mic', type=str, help='specify the microscope that generated the data. Either Jungfrau or Eiger', required =False)
-  parser.add_argument('-debug', '--debugging', type=str, help='turn on debugging', required =False)
+  parser.add_argument('-debug', '--debug', type=str, help='turn on debugging', required =False)
 
   args = parser.parse_args()
   return(args)
