@@ -102,7 +102,9 @@ def simple_moviemaker(path):
                         #print('oldfiles:', oldfiles)
                         if Movie_ID + 'movie' not in i:
                             img=Image.open(os.path.join(path, i))
+                            
                             tifseries.append(img)
+                            print(len(tifseries), ' open files')
                             #print(tifseries)
                     createFolder(os.path.join(path, 'movies'))
                     tifseriespath=os.path.join(path, 'movies', Movie_ID + 'movie.tiff')
