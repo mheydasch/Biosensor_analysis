@@ -92,7 +92,7 @@ def simple_moviemaker(path):
                     if current_ID!=None:
                     #get the files that belong to the current one 
                         for item in files:
-                            if current_ID in item:
+                            if current_ID in item and channel in item:
         
                                 current_Movie.append(item)
                     #append current id to the list of processed movies            
@@ -103,7 +103,7 @@ def simple_moviemaker(path):
                     tifseries=[]
                     for i in current_Movie:
                         #print('oldfiles:', oldfiles)
-                        if Movie_ID + 'movie' not in i:
+                        if Movie_ID + 'movie' not in i :
                             img=Image.open(os.path.join(path, i))
                             
                             tifseries.append(img)
@@ -124,7 +124,7 @@ def simple_moviemaker(path):
     return processed
 
 if __name__ == '__main__':
-    args=parseArguments()
+    args=parseArguments()   
     path=args.dir
     channel=args.chan
     microscope=args.mic
