@@ -131,7 +131,7 @@ if __name__ == '__main__':
     debugging=args.debug
     if args.mic == None:
         microscope='Jungfrau'
-    if args.debugging == None:
+    if args.debug == None:
         debugging == 'False'
     simple_moviemaker(path)
 
