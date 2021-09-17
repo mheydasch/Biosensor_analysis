@@ -114,7 +114,7 @@ def simple_moviemaker(path):
                     createFolder(os.path.join(path, 'movies'))
                     tifseriespath=os.path.join(path, 'movies', Movie_ID + 'movie.tiff')
                     try:
-                        imageio.imwrite(tifseriespath, tifseries, metadata={'axes':'TYX'}, imagej=True)
+                        imageio.mimwrite(tifseriespath, tifseries)
                         print('Movie saved as', tifseriespath)
                     except (RuntimeError) as e:
                         print(e)
