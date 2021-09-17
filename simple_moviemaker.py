@@ -104,6 +104,7 @@ def simple_moviemaker(path):
                             img=Image.open(os.path.join(path, i))
                             
                             tifseries.append(img)
+                            print(i)
                             print(len(tifseries), ' open files')
                             #print(tifseries)
                     createFolder(os.path.join(path, 'movies'))
