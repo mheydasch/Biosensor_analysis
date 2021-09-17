@@ -30,7 +30,7 @@ def parseArguments():
   parser.add_argument('-d', '--dir', type=str, help='The directory where the knockdown folders are', required=True)
   parser.add_argument('-ch', '--chan', type=str, help='specify the channel you want to make a movie from', required =False)
   parser.add_argument('-mic', '--mic', type=str, help='specify the microscope that generated the data. Either Jungfrau or Eiger', required =False)
-  parser.add_argument('-debugging', '--debugging', type=bool, help='turn on debugging', required =False)
+  parser.add_argument('-debug', '--debugging', type=bool, help='turn on debugging', required =False)
 
   args = parser.parse_args()
   return(args)
@@ -108,8 +108,8 @@ def simple_moviemaker(path):
                             
                             tifseries.append(img)
                             if debugging==True:
-                            print(i)
-                            print(len(tifseries), ' open files')
+                                print(i)
+                                print(len(tifseries), ' open files')
                             #print(tifseries)
                     createFolder(os.path.join(path, 'movies'))
                     tifseriespath=os.path.join(path, 'movies', Movie_ID + 'movie.tiff')
@@ -128,10 +128,11 @@ if __name__ == '__main__':
     path=args.dir
     channel=args.chan
     microscope=args.mic
+    debugging=args.debug
     if args.mic == None:
         microscope='Jungfrau'
     if args.debugging == None:
-        debugging== False
+        debugging == False
     simple_moviemaker(path)
 
     print(args)
