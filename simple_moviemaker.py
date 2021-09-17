@@ -35,17 +35,22 @@ def parseArguments():
   return(args)
   
 def simple_moviemaker(path):
+    #comment the following out:
+
     
     if microscope=='Jungfrau':
         
         pattern=re.compile('^(?P<Timepoint>t[0-9]+)_.*_(?P<Movie_ID>XY[0-9]+)_.*.tif')
+        
     if microscope=='Eiger':
         #pattern=re.compile('^(?P<Classifier>.*)(?P<FOV>_[0-9])_.*(?P<Site>_s[0-9]+)_(?P<Timepoint>t[0-9]+).TIF')
         pattern=re.compile('^(?P<Movie_ID>.*)_(?P<Timepoint>t[0-9]+).TIF')
+    if microscope=='NIS':
+        pattern=re.compile('.*(?P<Timepoint>T[0-9]+)_(?P<Movie_ID>XY[0-9+]).*.tif')
     #pattern=re.compile('(?P<Movie_ID>.*)(?P<Timepoint>_t[0-9]+)')
     processed=[]
     
-
+    
         
     #generating file list
     files=os.listdir(path)
@@ -61,7 +66,7 @@ def simple_moviemaker(path):
                     current_Movie=[]
                     #extracts ID and timepoint
                     try:
-                        if microscope=='Jungfrau':
+                        if microscope=='Jungfrau' or microscope=='NIS':
                             Movie_ID, Timepoint=re.search(pattern, item).group('Movie_ID', 'Timepoint')
                             current_ID=Movie_ID
                         if microscope=='Eiger':

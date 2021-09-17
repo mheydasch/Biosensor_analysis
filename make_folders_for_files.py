@@ -4,6 +4,8 @@
 Created on Mon Mar 15 12:34:28 2021
 
 @author: max
+
+making folders for tif files for the morphodynamics software
 """
 
 import os
