@@ -7,6 +7,7 @@ Created on Fri Oct 23 10:29:01 2020
 """
 import os
 import re
+import sys
 from shutil import copyfile
 from shutil import move
 import shutil 
@@ -87,6 +88,8 @@ def simple_moviemaker(path):
                     #exception in case an item was found that cant be matched    
                     except:
                         print('{} does not match pattern'.format(item))
+                        if debugging == 'True':
+                            print (sys.exc_info()[0])
                         continue
                     #check if movie has been processed already
                     if current_ID!=None:
