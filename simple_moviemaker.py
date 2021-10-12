@@ -112,6 +112,7 @@ def simple_moviemaker(path):
                                 print(len(tifseries), ' open files')
                             #print(tifseries)
                     createFolder(os.path.join(path, 'movies'))
+                    Movie_ID=Movie_ID.replace(' ', '')
                     tifseriespath=os.path.join(path, 'movies', Movie_ID + 'movie.tiff')
                     try:
                         imageio.mimwrite(tifseriespath, tifseries)
@@ -132,7 +133,7 @@ if __name__ == '__main__':
     if args.mic == None:
         microscope='Jungfrau'
     if args.debug == None:
-        debugging == 'False'
+        debugging == 'True'
     simple_moviemaker(path)
 
     print(args)
