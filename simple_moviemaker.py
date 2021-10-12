@@ -89,7 +89,7 @@ def simple_moviemaker(path):
                     except:
                         print('{} does not match pattern'.format(item))
                         if debugging == 'True':
-                            print (sys.exc_info()[0])
+                            print (sys.exc_info())
                         continue
                     #check if movie has been processed already
                     if current_ID!=None:
