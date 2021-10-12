@@ -51,7 +51,8 @@ def simple_moviemaker(path):
         pattern=re.compile('.*(?P<Timepoint>T[0-9]+)_(?P<Movie_ID>XY[0-9]+).*.tif')
     #pattern=re.compile('(?P<Movie_ID>.*)(?P<Timepoint>_t[0-9]+)')
     processed=[]
-    
+    if debugging=='True':
+        print(pattern)
     
         
     #generating file list
