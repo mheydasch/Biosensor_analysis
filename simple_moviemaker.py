@@ -11,15 +11,17 @@ import sys
 from shutil import copyfile
 from shutil import move
 import shutil 
+import skimage.io
+import numpy as np
 from distutils.dir_util import copy_tree
 from PIL import Image, ImageSequence
 import imageio
 from natsort import natsorted
 import glob, os
 import dask.array as da
-from dask_image import imread
-from dask import delayed
-from tqdm import tqdm
+from dask_image.imread import imread
+#from dask import delayed
+#from tqdm import tqdm
 
 import argparse
 
@@ -130,9 +132,23 @@ def simple_moviemaker(path):
                                     print(i)
                                     print(len(tifseries), ' open files')
                     if microscope=='micromanager':
-                        tifseries=[imread(f) for f in current_Movie]
-                        if debugging==True:
-                            print(tifseries)
+                        tifseries=[imread(os.path.join(path, i)) for i in current_Movie]
+# =============================================================================
+#                         if debugging=='True':
+#                             print(tifseries)
+# =============================================================================
+                        stack=da.stack(tifseries)
+                        stack=np.squeeze(stack)
+# =============================================================================
+#                         for i in current_Movie:
+#                             if debugging=='True':
+#                                 print(i)
+#                             if Movie_ID + 'movie' not in i :
+#                                 img=imread(os.path.join(path, i))
+#  
+#                                 if debugging=='True':
+#                                     print(len(tifseries), ' open files')
+# =============================================================================
                          
                             
                             #print(tifseries)
@@ -142,11 +158,14 @@ def simple_moviemaker(path):
                     if microscope == 'micromanager':
                         pathsplit=path.split(sep='/')
                         
-                        tifseriespath=os.path.join(path, 'movies', pathsplit[len(pathsplit)-2] + '_'+  Movie_ID + '_movie.tiff')
+                        tifseriespath1=os.path.join(path, 'movies', pathsplit[len(pathsplit)-2] + '_'+  Movie_ID + 'C1_movie.tiff')
+                        tifseriespath2=os.path.join(path, 'movies', pathsplit[len(pathsplit)-2] + '_'+  Movie_ID + 'C2_movie.tiff')
 
                     try:
-                        tifseries[0].save(tifseriespath, save_all=True, append_images=tifseries[1:])
-        
+                        #tifseries[0].save(tifseriespath, save_all=True, append_images=tifseries[1:])
+                        skimage.io.imsave(tifseriespath1, stack[:,0,:,:])
+                        skimage.io.imsave(tifseriespath2, stack[:,1,:,:])
+
                         print('Movie saved as', tifseriespath)
                     except (RuntimeError) as e:
                         print(e)
@@ -154,7 +173,7 @@ def simple_moviemaker(path):
                 else:
                     print('Channel cannot be found')
     return processed
-
+#%%
 if __name__ == '__main__':
     args=parseArguments()   
     path=args.dir
