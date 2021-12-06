@@ -16,7 +16,7 @@ from PIL import Image, ImageSequence
 import imageio
 from natsort import natsorted
 import glob, os
-import cv2
+
 
 import argparse
 
@@ -133,7 +133,9 @@ def simple_moviemaker(path):
                         tifseriespath=os.path.join(path, 'movies', pathsplit[len(pathsplit)-2] + '_'+  Movie_ID + '_movie.tiff')
 
                     try:
-                        tifseries.save(tifseriespath, save_all=True)
+                        if debugging=='True':
+                            print('Saving tifseries')
+                        tifseries[0].save(tifseriespath, compression='tiff_deflate', save_all=True, append_images=tifseries[1:])
         
                         print('Movie saved as', tifseriespath)
                     except (RuntimeError) as e:
