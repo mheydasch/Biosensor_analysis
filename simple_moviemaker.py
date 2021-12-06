@@ -16,9 +16,14 @@ from PIL import Image, ImageSequence
 import imageio
 from natsort import natsorted
 import glob, os
-
+import dask.array as da
+from dask_image import imread
+from dask import delayed
+from tqdm import tqdm
 
 import argparse
+
+#%%
 
 def createFolder(directory):
     try:
@@ -101,28 +106,35 @@ def simple_moviemaker(path):
                     #get the files that belong to the current one 
                         for item in files:
                             try:
-                                Movie_ID, Timepoint=re.search(pattern, item).group('Movie_ID', 'Timepoint')
+                                sanity_id, Timepoint=re.search(pattern, item).group('Movie_ID', 'Timepoint')
                             except:
                                 continue
 
-                            if current_ID ==Movie_ID and channel in item:
+                            if current_ID ==sanity_id and channel in item:
         
                                 current_Movie.append(item)
                     #append current id to the list of processed movies            
                     processed.append(current_ID)
                     #sorting current list
                     current_Movie=natsorted(current_Movie)
-                
                     tifseries=[]
-                    for i in current_Movie:
-                        #print('oldfiles:', oldfiles)
-                        if Movie_ID + 'movie' not in i :
-                            img=Image.open(os.path.join(path, i))
+                    if microscope!='micromanager':
+                        for i in current_Movie:
+                            #print('oldfiles:', oldfiles)
+    
+                            if Movie_ID + 'movie' not in i :
+                                img=Image.open(os.path.join(path, i))
+                                
+                                tifseries.append(img)
+                                if debugging=='True':
+                                    print(i)
+                                    print(len(tifseries), ' open files')
+                    if microscope=='micromanager':
+                        tifseries=[imread(f) for f in current_Movie]
+                        if debugging==True:
+                            print(tifseries)
+                         
                             
-                            tifseries.append(img)
-                            if debugging=='True':
-                                print(i)
-                                print(len(tifseries), ' open files')
                             #print(tifseries)
                     createFolder(os.path.join(path, 'movies'))
                     Movie_ID=Movie_ID.replace(' ', '')
@@ -133,9 +145,7 @@ def simple_moviemaker(path):
                         tifseriespath=os.path.join(path, 'movies', pathsplit[len(pathsplit)-2] + '_'+  Movie_ID + '_movie.tiff')
 
                     try:
-                        if debugging=='True':
-                            print('Saving tifseries')
-                        tifseries[0].save(tifseriespath, compression='tiff_deflate', save_all=True, append_images=tifseries[1:])
+                        tifseries[0].save(tifseriespath, save_all=True, append_images=tifseries[1:])
         
                         print('Movie saved as', tifseriespath)
                     except (RuntimeError) as e:
