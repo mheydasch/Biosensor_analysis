@@ -12,10 +12,11 @@ from shutil import copyfile
 from shutil import move
 import shutil 
 from distutils.dir_util import copy_tree
-from PIL import Image
+from PIL import Image, ImageSequence
 import imageio
 from natsort import natsorted
 import glob, os
+import cv2
 
 import argparse
 
@@ -30,7 +31,7 @@ def parseArguments():
   parser = argparse.ArgumentParser(description='collect segmentation files into one directory')
   parser.add_argument('-d', '--dir', type=str, help='The directory where the knockdown folders are', required=True)
   parser.add_argument('-ch', '--chan', type=str, help='specify the channel you want to make a movie from', required =False)
-  parser.add_argument('-mic', '--mic', type=str, help='specify the microscope that generated the data. Either Jungfrau or Eiger', required =False)
+  parser.add_argument('-mic', '--mic', type=str, help='specify the microscope that generated the data. Either Jungfrau, Eiger, NIS or micromanager', required =False)
   parser.add_argument('-debug', '--debug', type=str, help='turn on debugging', required =False)
 
   args = parser.parse_args()
@@ -49,6 +50,8 @@ def simple_moviemaker(path):
         pattern=re.compile('^(?P<Movie_ID>.*)_(?P<Timepoint>t[0-9]+).TIF')
     if microscope=='NIS':
         pattern=re.compile('.*(?P<Timepoint>T[0-9]+)_(?P<Movie_ID>XY[0-9]+).*.tif')
+    if microscope=='micromanager':
+        pattern=re.compile('^(?P<Movie_ID>[0-9]{2})_(?P<Timepoint>[0-9]{5}).tiff')
     #pattern=re.compile('(?P<Movie_ID>.*)(?P<Timepoint>_t[0-9]+)')
     processed=[]
   
@@ -71,7 +74,7 @@ def simple_moviemaker(path):
                     current_Movie=[]
                     #extracts ID and timepoint
                     try:
-                        if microscope=='Jungfrau' or microscope=='NIS':
+                        if microscope=='Jungfrau' or microscope=='NIS' or microscope=='micromanager':
                             Movie_ID, Timepoint=re.search(pattern, item).group('Movie_ID', 'Timepoint')
                             current_ID=Movie_ID
                         if microscope=='Eiger':
@@ -97,7 +100,12 @@ def simple_moviemaker(path):
                     if current_ID!=None:
                     #get the files that belong to the current one 
                         for item in files:
-                            if current_ID in item and channel in item:
+                            try:
+                                Movie_ID, Timepoint=re.search(pattern, item).group('Movie_ID', 'Timepoint')
+                            except:
+                                continue
+
+                            if current_ID ==Movie_ID and channel in item:
         
                                 current_Movie.append(item)
                     #append current id to the list of processed movies            
@@ -119,8 +127,14 @@ def simple_moviemaker(path):
                     createFolder(os.path.join(path, 'movies'))
                     Movie_ID=Movie_ID.replace(' ', '')
                     tifseriespath=os.path.join(path, 'movies', Movie_ID + 'movie.tiff')
+                    if microscope == 'micromanager':
+                        pathsplit=path.split(sep='/')
+                        
+                        tifseriespath=os.path.join(path, 'movies', pathsplit[len(pathsplit)-2] + '_'+  Movie_ID + '_movie.tiff')
+
                     try:
-                        imageio.mimwrite(tifseriespath, tifseries)
+                        tifseries.save(tifseriespath, save_all=True)
+        
                         print('Movie saved as', tifseriespath)
                     except (RuntimeError) as e:
                         print(e)

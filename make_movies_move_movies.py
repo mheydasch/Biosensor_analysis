@@ -93,6 +93,9 @@ def get_move_paths(path, mode):
     end_dirs=[]
     moviename=mode
     
+    if moviename == 'signal':
+        findfile=re.compile('.png')
+    
     for root, dirs, files in os.walk(path):
         if findfile in files:
             i_dirs.append(root)
@@ -117,12 +120,16 @@ def get_move_paths(path, mode):
 
                 if os.path.isdir(i_path):
                     try:
+                        
                         oldfiles=[os.path.join(i_path, f) for f in os.listdir(i_path) if os.path.isfile(os.path.join(i_path, f))\
                                   if re.search(tifind, f) is not None ]
+                        if moviename== 'signal':
+                            oldfiles=[f for f in oldfiles if 'Mean' in f]
                         #print(oldfiles)
                         oldfiles=natsorted(oldfiles)
                         tifseries=[]    
                         print('ipath_:',i_path)
+                        print(oldfiles)
                         
                         for i in oldfiles:
                             #print('oldfiles:', oldfiles)
@@ -283,20 +290,9 @@ if __name__ == '__main__':
         move_errors(errors)
     print(args)
 #%%
+path='/Volumes/imaging.data/Max/REF52/DLC_1/FRET/FRET_5/FRET_5/'
 pattern=re.compile('(?P<Movie_ID>.*)(?P<Timepoint>_t[0-9]+)')
-processed=[]
-#generating file list
-files=os.listdir(path)
-    #checking individual files
-for item in files:
-    current_ID=None
-    if '.tif' in item or '.TIF' in item or '.tiff' in item:
-        current_Movie=[]
-        #extracts ID and timepoint
-        try:
-            Movie_ID, Timepoint=re.search(pattern, item).group('Movie_ID', 'Timepoint')
-        except:
-            pass
+copy_file(path, 'signals')
 
 #onlyfiles=[f for f in os.listdir(path) if isfile(join(path, f))]
 #
