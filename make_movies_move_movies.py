@@ -62,6 +62,19 @@ def createFolder(directory):
             os.makedirs(directory)
     except OSError:
         print ('Error: Creating directory. ' + directory)
+        
+#%%
+
+
+
+
+
+
+
+
+
+
+        
 #%%
 #for filepath in glob.glob(path + '*{}'.format(identifier))
 def go_one_up(path):
